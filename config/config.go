@@ -16,7 +16,6 @@ type (
 		Pattern string
 	}
 	config struct {
-		file    string
 		Entries []entry
 	}
 )
@@ -26,7 +25,6 @@ var conf Config
 func Conf(file string) Config {
 	if conf == nil || len(conf.GetEntry()) == 0 {
 		c := config{
-			file:    file,
 			Entries: make([]entry, 0),
 		}
 		c.readConfig(file)
