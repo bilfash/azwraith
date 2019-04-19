@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"github.com/bilfash/azwraith/config"
+	"github.com/magiconair/properties/assert"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -95,15 +96,9 @@ func Test_config_GetEntry(t *testing.T) {
 			}
 			c := config.Conf(tt.filename)
 			for key, expected := range c.GetEntry() {
-				if tt.want[key].Email != expected.Email {
-					t.Errorf("config.GetEntry() Email = \"%v\", want \"%v\"", expected.Email, tt.want[key].Email)
-				}
-				if tt.want[key].Name != expected.Name {
-					t.Errorf("config.GetEntry() Name = \"%v\", want \"%v\"", expected.Name, tt.want[key].Name)
-				}
-				if tt.want[key].Pattern != expected.Pattern {
-					t.Errorf("config.GetEntry() Pattern = \"%v\", want \"%v\"", expected.Pattern, tt.want[key].Pattern)
-				}
+				assert.Equal(t, expected.Email, tt.want[key].Email)
+				assert.Equal(t, expected.Name, tt.want[key].Name)
+				assert.Equal(t, expected.Pattern, tt.want[key].Pattern)
 			}
 		})
 	}

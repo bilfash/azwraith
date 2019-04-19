@@ -2,6 +2,7 @@ package rgxmatcher_test
 
 import (
 	"github.com/bilfash/azwraith/rgxmatcher"
+	"github.com/magiconair/properties/assert"
 	"testing"
 )
 
@@ -83,13 +84,10 @@ func Test_matcher_IsMatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m, err := rgxmatcher.NewMatcher(tt.exp)
-			if (err != nil) != tt.want.err {
-				t.Errorf("matcher.NewMatcher() got %v, when want error is %v", err, tt.want.err)
-			}
+			assert.Equal(t, err != nil, tt.want.err)
 			if m != nil {
-				if got := m.IsMatch(tt.args); got != tt.want.matched {
-					t.Errorf("matcher.IsMatch() = %v, want %v", got, tt.want)
-				}
+				got := m.IsMatch(tt.args)
+				assert.Equal(t, got, tt.want.matched)
 			}
 		})
 	}
