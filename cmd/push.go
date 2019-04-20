@@ -48,10 +48,12 @@ var pushConfigCmd = &cobra.Command{
 			fmt.Println("Config matches not found\nCode not pushed!!")
 			return
 		}
-
-		fmt.Println(setUsername(username))
-		fmt.Println(setEmail(email))
-		fmt.Println(push())
+		fmt.Println("Remote          :", remote)
+		fmt.Println("Set username to :", username)
+		fmt.Println("Set email to    :", email)
+		fmt.Print(setUsername(username))
+		fmt.Print(setEmail(email))
+		fmt.Print(push())
 	},
 }
 
