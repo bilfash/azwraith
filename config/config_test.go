@@ -1,24 +1,24 @@
 package config_test
 
 import (
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/bilfash/azwraith/config"
-	"github.com/magiconair/properties/assert"
 )
 
 var yamlConfig = `entries:
   - name: username1
     email: user1@email.com
-    pattern: gitlab.com/*
+    pattern: gitlab1.com/*
   - name: username2
     email: user2@email.com
-    pattern: gitlab.com/*
+    pattern: gitlab2.com/*
   - name: username3
     email: user3@email.com
-    pattern: gitlab.com/*`
+    pattern: gitlab3.com/*`
 
 func Test_config_GetEntry(t *testing.T) {
 	type entry struct {
@@ -53,17 +53,17 @@ func Test_config_GetEntry(t *testing.T) {
 				{
 					Name:    "username1",
 					Email:   "user1@email.com",
-					Pattern: "gitlab.com/*",
+					Pattern: "gitlab1.com/*",
 				},
 				{
 					Name:    "username2",
 					Email:   "user2@email.com",
-					Pattern: "gitlab.com/*",
+					Pattern: "gitlab2.com/*",
 				},
 				{
 					Name:    "username3",
 					Email:   "user3@email.com",
-					Pattern: "gitlab.com/*",
+					Pattern: "gitlab3.com/*",
 				},
 			},
 		},
@@ -121,6 +121,98 @@ func Test_config_RegisterEntry(t *testing.T) {
 			assert.Equal(t, entries[3].Email, tt.args.mail)
 			assert.Equal(t, entries[3].Name, tt.args.name)
 			assert.Equal(t, entries[3].Pattern, tt.args.pattern)
+		})
+	}
+}
+
+func Test_config_DeleteEntry(t *testing.T) {
+	type args struct {
+		index int
+	}
+	type fields struct {
+		checkField bool
+		name       string
+		email      string
+		pattern    string
+		length     int
+	}
+	tests := []struct {
+		name       string
+		filename   string
+		yamlString string
+		args       args
+		want       fields
+	}{
+		{
+			name:       "TestPositiveSuccessRemoveIndex0",
+			filename:   ".azwraith_test_delete",
+			yamlString: yamlConfig,
+			args: args{
+				index: 0,
+			},
+			want: fields{
+				checkField: true,
+				name:       "username1",
+				email:      "user1@email.com",
+				pattern:    "gitlab.com/*",
+				length:     2,
+			},
+		},
+		{
+			name:       "TestPositiveSuccessRemoveIndex1",
+			filename:   ".azwraith",
+			yamlString: yamlConfig,
+			args: args{
+				index: 1,
+			},
+			want: fields{
+				checkField: true,
+				name:       "username2",
+				email:      "user2@email.com",
+				pattern:    "gitlab.com/*",
+				length:     2,
+			},
+		},
+		{
+			name:       "TestPositiveSuccessRemoveIndex2",
+			filename:   ".azwraith",
+			yamlString: yamlConfig,
+			args: args{
+				index: 1,
+			},
+			want: fields{
+				checkField: false,
+				length:     2,
+			},
+		},
+		{
+			name:       "TestNegativeIndexOutOfBound",
+			filename:   ".azwraith",
+			yamlString: yamlConfig,
+			args: args{
+				index: 99,
+			},
+			want: fields{
+				checkField: false,
+				length:     3,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.filename != "" {
+				ioutil.WriteFile(tt.filename, []byte(tt.yamlString), 0644)
+				defer os.Remove(tt.filename)
+			}
+			c := config.Conf(tt.filename)
+			c.DeleteEntry(tt.args.index)
+			entries := c.GetEntry()
+			assert.Equal(t, tt.want.length, len(entries))
+			if tt.want.checkField {
+				assert.NotEqual(t, tt.want.email, entries[tt.args.index].Email)
+				assert.NotEqual(t, tt.want.name, entries[tt.args.index].Name)
+				assert.NotEqual(t, tt.want.pattern, entries[tt.args.index].Pattern)
+			}
 		})
 	}
 }

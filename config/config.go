@@ -11,6 +11,7 @@ type (
 	Config interface {
 		GetEntry() []entry
 		RegisterEntry(name string, mail string, pattern string)
+		DeleteEntry(index int)
 	}
 	entry struct {
 		Name    string
@@ -23,18 +24,13 @@ type (
 	}
 )
 
-var conf Config
-
 func Conf(file string) Config {
-	if conf == nil || len(conf.GetEntry()) == 0 {
-		c := config{
-			filename: file,
-			Entries:  make([]entry, 0),
-		}
-		c.readConfig()
-		conf = &c
+	c := config{
+		filename: file,
+		Entries:  make([]entry, 0),
 	}
-	return conf
+	c.readConfig()
+	return &c
 }
 
 func (c *config) readConfig() {
@@ -73,4 +69,11 @@ func (c *config) RegisterEntry(name string, mail string, pattern string) {
 	}
 	c.Entries = append(c.Entries, ent)
 	c.saveToConfig()
+}
+
+func (c *config) DeleteEntry(index int) {
+	if index < len(c.Entries) {
+		c.Entries = append(c.Entries[:index], c.Entries[index+1:]...)
+		c.saveToConfig()
+	}
 }

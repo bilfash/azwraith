@@ -19,6 +19,7 @@ func init() {
 
 	configCmd.AddCommand(getConfigCmd)
 	configCmd.AddCommand(addConfigCmd)
+	configCmd.AddCommand(deleteConfigCmd)
 }
 
 var getConfigCmd = &cobra.Command{
@@ -31,7 +32,7 @@ var getConfigCmd = &cobra.Command{
 
 var addConfigCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Get all config",
+	Short: "Add config",
 	Run: func(cmd *cobra.Command, args []string) {
 		name := readLine("git user.name")
 		email := readLine("git user.email")
@@ -39,6 +40,18 @@ var addConfigCmd = &cobra.Command{
 
 		conf := getConfig()
 		conf.RegisterEntry(name, email, pattern)
+	},
+}
+
+var deleteConfigCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete config given ID",
+	Run: func(cmd *cobra.Command, args []string) {
+		idxString := readLine("config ID")
+		idx, _ := strconv.Atoi(idxString)
+
+		conf := getConfig()
+		conf.DeleteEntry(idx)
 	},
 }
 
@@ -55,7 +68,7 @@ func printConfig() {
 	header := []string{"ID", "user.name", "user.email", "pattern"}
 	rows := make([][]string, 0)
 	for key, entry := range entries {
-		rows = append(rows, []string{strconv.Itoa(key + 1), entry.Name, entry.Email, entry.Pattern})
+		rows = append(rows, []string{strconv.Itoa(key), entry.Name, entry.Email, entry.Pattern})
 	}
 	util.PrintTable(header, rows)
 }
