@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"github.com/fatih/structs"
+	"github.com/bilfash/azwraith/util"
 	"github.com/spf13/cobra"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -25,16 +25,7 @@ var getConfigCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get all config",
 	Run: func(cmd *cobra.Command, args []string) {
-		conf := getConfig()
-		entries := conf.GetEntry()
-		for _, entry := range entries {
-			mapEntry := structs.Map(entry)
-			formattedValue, err := json.MarshalIndent(mapEntry, "", "  ")
-			if err != nil {
-				fmt.Println("Config is not well formatted: ", err)
-			}
-			fmt.Println(string(formattedValue))
-		}
+		printConfig()
 	},
 }
 
@@ -42,9 +33,9 @@ var addConfigCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Get all config",
 	Run: func(cmd *cobra.Command, args []string) {
-		name := readLine("user.name")
-		email := readLine("user.email")
-		pattern := readLine("pattern")
+		name := readLine("git user.name")
+		email := readLine("git user.email")
+		pattern := readLine("git remote pattern")
 
 		conf := getConfig()
 		conf.RegisterEntry(name, email, pattern)
@@ -53,7 +44,18 @@ var addConfigCmd = &cobra.Command{
 
 func readLine(fieldName string) string {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Printf("Enter git %s: ", fieldName)
+	fmt.Printf("Enter %s: ", fieldName)
 	text, _ := reader.ReadString('\n')
 	return strings.TrimSuffix(text, "\n")
+}
+
+func printConfig() {
+	conf := getConfig()
+	entries := conf.GetEntry()
+	header := []string{"ID", "user.name", "user.email", "pattern"}
+	rows := make([][]string, 0)
+	for key, entry := range entries {
+		rows = append(rows, []string{strconv.Itoa(key + 1), entry.Name, entry.Email, entry.Pattern})
+	}
+	util.PrintTable(header, rows)
 }
