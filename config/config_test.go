@@ -1,11 +1,12 @@
 package config_test
 
 import (
-	"github.com/bilfash/azwraith/config"
-	"github.com/magiconair/properties/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/bilfash/azwraith/config"
+	"github.com/magiconair/properties/assert"
 )
 
 var yamlConfig = `entries:
@@ -24,10 +25,6 @@ func Test_config_GetEntry(t *testing.T) {
 		Name    string
 		Email   string
 		Pattern string
-	}
-	type fields struct {
-		file    string
-		Entries []entry
 	}
 	tests := []struct {
 		name       string
@@ -84,6 +81,46 @@ func Test_config_GetEntry(t *testing.T) {
 				assert.Equal(t, expected.Name, tt.want[key].Name)
 				assert.Equal(t, expected.Pattern, tt.want[key].Pattern)
 			}
+		})
+	}
+}
+
+func Test_config_RegisterEntry(t *testing.T) {
+	type args struct {
+		name    string
+		mail    string
+		pattern string
+	}
+	tests := []struct {
+		name       string
+		filename   string
+		yamlString string
+		args       args
+	}{
+		{
+			name:       "TestPositiveSuccess",
+			filename:   ".azwraith",
+			yamlString: yamlConfig,
+			args: args{
+				name:    "test",
+				mail:    "test@mail.com",
+				pattern: "github.com/*",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.filename != "" {
+				ioutil.WriteFile(tt.filename, []byte(tt.yamlString), 0644)
+				defer os.Remove(tt.filename)
+			}
+			c := config.Conf(tt.filename)
+			c.RegisterEntry(tt.args.name, tt.args.mail, tt.args.pattern)
+			entries := c.GetEntry()
+			assert.Equal(t, len(entries), 4)
+			assert.Equal(t, entries[3].Email, tt.args.mail)
+			assert.Equal(t, entries[3].Name, tt.args.name)
+			assert.Equal(t, entries[3].Pattern, tt.args.pattern)
 		})
 	}
 }

@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/structs"
 	"github.com/spf13/cobra"
+	"os"
+	"strings"
 )
 
 func init() {
@@ -12,10 +15,10 @@ func init() {
 		Use:   "config",
 		Short: "Run azwraith config related command",
 	}
-
 	rootCmd.AddCommand(configCmd)
 
 	configCmd.AddCommand(getConfigCmd)
+	configCmd.AddCommand(addConfigCmd)
 }
 
 var getConfigCmd = &cobra.Command{
@@ -33,4 +36,24 @@ var getConfigCmd = &cobra.Command{
 			fmt.Println(string(formattedValue))
 		}
 	},
+}
+
+var addConfigCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Get all config",
+	Run: func(cmd *cobra.Command, args []string) {
+		name := readLine("user.name")
+		email := readLine("user.email")
+		pattern := readLine("pattern")
+
+		conf := getConfig()
+		conf.RegisterEntry(name, email, pattern)
+	},
+}
+
+func readLine(fieldName string) string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("Enter git %s: ", fieldName)
+	text, _ := reader.ReadString('\n')
+	return strings.TrimSuffix(text, "\n")
 }
