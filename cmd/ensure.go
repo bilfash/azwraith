@@ -11,7 +11,7 @@ var remoteUrl string
 
 func init() {
 	rootCmd.AddCommand(ensureConfigCmd)
-	ensureConfigCmd.Flags().StringVarP(&remoteUrl, "remote", "r", "", "git remote url")
+	ensureConfigCmd.Flags().StringVarP(&remoteUrl, "url", "u", "", "git remote url")
 	ensureConfigCmd.MarkFlagRequired("remote")
 }
 
