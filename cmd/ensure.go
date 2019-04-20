@@ -12,7 +12,7 @@ var remoteUrl string
 func init() {
 	rootCmd.AddCommand(ensureConfigCmd)
 	ensureConfigCmd.Flags().StringVarP(&remoteUrl, "url", "u", "", "git remote url")
-	ensureConfigCmd.MarkFlagRequired("remote")
+	ensureConfigCmd.MarkFlagRequired("url")
 }
 
 var ensureConfigCmd = &cobra.Command{
