@@ -24,10 +24,6 @@ func getConfig() config.Config {
 	return config.Conf(fmt.Sprintf("%s/%s", home, configFile))
 }
 
-func help(args []string) bool {
-	return args[0] == "help"
-}
-
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

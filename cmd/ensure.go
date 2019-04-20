@@ -7,8 +7,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var remoteUrl string
+
 func init() {
 	rootCmd.AddCommand(ensureConfigCmd)
+	ensureConfigCmd.Flags().StringVarP(&remoteUrl, "remote", "r", "", "git remote url")
+	ensureConfigCmd.MarkFlagRequired("remote")
 }
 
 var ensureConfigCmd = &cobra.Command{
@@ -16,12 +20,7 @@ var ensureConfigCmd = &cobra.Command{
 	Short: "Ensure azwraith config is working as expected",
 	Long: "Ensure will match remote url from command argument to current azwraith config. This will help you " +
 		"to make sure your azwraith config is working as expected",
-	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if help(args) {
-			cmd.Help()
-			return
-		}
 		conf := getConfig()
 		entries := conf.GetEntry()
 		for _, entry := range entries {
@@ -30,7 +29,7 @@ var ensureConfigCmd = &cobra.Command{
 				fmt.Println(err)
 				return
 			}
-			if matcher.IsMatch(args[0]) {
+			if matcher.IsMatch(remoteUrl) {
 				header := []string{"Key", "Value"}
 				rows := [][]string{
 					{
