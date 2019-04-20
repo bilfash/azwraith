@@ -4,6 +4,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 type (
@@ -35,8 +36,10 @@ func Conf(file string) Config {
 
 func (c *config) readConfig(file string) {
 	yamlFile, err := ioutil.ReadFile(file)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "no such file or directory") {
 		log.Printf("yamlFile.Get err : %v ", err)
+	} else if err != nil && strings.Contains(err.Error(), "no such file or directory") {
+		ioutil.WriteFile(file, []byte(""), 0644)
 	}
 	err = yaml.Unmarshal(yamlFile, c)
 	if err != nil {

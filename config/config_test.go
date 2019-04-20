@@ -33,41 +33,25 @@ func Test_config_GetEntry(t *testing.T) {
 		name       string
 		filename   string
 		yamlString string
-		fields     fields
 		want       []entry
 	}{
 		{
 			name:       "TestNegativeFileNotFound®",
 			filename:   "",
 			yamlString: "",
-			fields: fields{
-				Entries: []entry{},
-			},
-			want: []entry{},
+			want:       []entry{},
 		},
 		{
 			name:     "TestNegativeFileUnformattedProperly®",
 			filename: ".azwraith_test",
 			yamlString: `file:
 	- gsg`,
-			fields: fields{
-				Entries: []entry{},
-			},
 			want: []entry{},
 		},
 		{
 			name:       "TestPositiveInitialInstallation",
 			filename:   ".azwraith_test",
 			yamlString: yamlConfig,
-			fields: fields{
-				Entries: []entry{
-					{
-						Name:    "username",
-						Email:   "useremail@mail.com",
-						Pattern: "gitlab.com",
-					},
-				},
-			},
 			want: []entry{
 				{
 					Name:    "username1",
