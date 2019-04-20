@@ -14,10 +14,14 @@ func init() {
 var ensureConfigCmd = &cobra.Command{
 	Use:   "ensure",
 	Short: "Ensure azwraith config is working as expected",
-	Long: "Ensure will match remote url from command argument to current azwraith config. This will help you" +
+	Long: "Ensure will match remote url from command argument to current azwraith config. This will help you " +
 		"to make sure your azwraith config is working as expected",
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		if help(args) {
+			cmd.Help()
+			return
+		}
 		conf := getConfig()
 		entries := conf.GetEntry()
 		for _, entry := range entries {
