@@ -10,22 +10,21 @@ import (
 var (
 	command = "git"
 	remote  string
-	branch  string
 	cli     cliintrepeter.CliInterpreter
 )
 
 func init() {
 	cli = cliintrepeter.NewCliInterpreter()
-	rootCmd.AddCommand(pushConfigCmd)
-	pushConfigCmd.Flags().StringVarP(&remote, "remote", "r", "origin", "specify git remote to push")
-	pushConfigCmd.Flags().StringVarP(&branch, "branch", "b", "", "specify git branch to push")
+	rootCmd.AddCommand(commitCmd)
+	commitCmd.Flags().StringVarP(&remote, "remote", "r", "origin", "specify git remote to push")
 }
 
-var pushConfigCmd = &cobra.Command{
-	Use:   "push",
-	Short: "Push your code",
-	Long: "Push command will get remote url and match it with azwraith config, " +
-		"after getting the right config azwraith will push your code",
+var commitCmd = &cobra.Command{
+	Use:   "commit",
+	Short: "Commit your code",
+	Args:  cobra.ExactArgs(1),
+	Long: "Commit command will get remote url and match it with azwraith config, " +
+		"after getting the right config azwraith will commit your code using credential from matched config",
 	Run: func(cmd *cobra.Command, args []string) {
 		remoteUrl := getRemoteUrl(remote)
 		username := ""
@@ -45,7 +44,7 @@ var pushConfigCmd = &cobra.Command{
 			}
 		}
 		if username == "" || email == "" {
-			fmt.Println("Config matches not found\nCode not pushed!!")
+			fmt.Println("Config matches not found\nCode not commited!!")
 			return
 		}
 		fmt.Println("Remote          :", remote)
@@ -53,7 +52,7 @@ var pushConfigCmd = &cobra.Command{
 		fmt.Println("Set email to    :", email)
 		fmt.Print(setUsername(username))
 		fmt.Print(setEmail(email))
-		fmt.Print(push())
+		fmt.Print(push(args[0]))
 	},
 }
 
@@ -72,12 +71,7 @@ func setEmail(email string) string {
 	return output
 }
 
-func push() string {
-	output := ""
-	if branch == "" {
-		output, _ = cli.Execute(command, "push", remote)
-	} else {
-		output, _ = cli.Execute(command, "push", remote, branch)
-	}
+func push(message string) string {
+	output, _ := cli.Execute(command, "commit", "-m", message)
 	return output
 }
