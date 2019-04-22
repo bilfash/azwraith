@@ -16,7 +16,7 @@ var (
 func init() {
 	cli = cliintrepeter.NewCliInterpreter()
 	rootCmd.AddCommand(commitCmd)
-	commitCmd.Flags().StringVarP(&remote, "remote", "r", "origin", "specify git remote to push")
+	commitCmd.Flags().StringVarP(&remote, "remote", "r", "origin", "specify which git remote is used")
 }
 
 var commitCmd = &cobra.Command{
@@ -52,7 +52,7 @@ var commitCmd = &cobra.Command{
 		fmt.Println("Set email to    :", email)
 		fmt.Print(setUsername(username))
 		fmt.Print(setEmail(email))
-		fmt.Print(push(args[0]))
+		fmt.Print(commit(args[0]))
 	},
 }
 
@@ -71,7 +71,7 @@ func setEmail(email string) string {
 	return output
 }
 
-func push(message string) string {
+func commit(message string) string {
 	output, _ := cli.Execute(command, "commit", "-m", message)
 	return output
 }

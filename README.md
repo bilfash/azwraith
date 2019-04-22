@@ -29,19 +29,21 @@ go get github.com/bilfash/azwraith
 ```
 % azwraith help
 
-Azwraith is a cli command to manage credential when committing your changes to version control system
+Azwraith is a cli command to manage credential when pushing your changes to version control system
 
 Usage:
   azwraith [command]
 
 Available Commands:
+  commit      Commit your code
   config      Run azwraith config related command
   ensure      Ensure azwraith config is working as expected
   help        Help about any command
-  push        Push your code
 
 Flags:
   -h, --help   help for azwraith
+
+Use "azwraith [command] --help" for more information about a command.
 ```
 ##### Config
 Azwraith store its configuration on  `~/.azwraith`, azwraith config consist of list :
@@ -70,7 +72,8 @@ Azwraith provide feature to make sure your configuration working properly and re
 ```
 % azwraith ensure -h
 
-Ensure will match remote url from command argument to current azwraith config. This will help you to make sure your azwraith config is working as expected
+Ensure will match remote url from command argument to current azwraith config. This will help you to make sure your 
+azwraith config is working as expected
 
 Usage:
   azwraith ensure [flags]
@@ -81,20 +84,19 @@ Flags:
 ```
 `-u` flags is mandatory.
 
-##### Push
-Push command will get remote url and match it with azwraith config, after getting the right config azwraith 
-will push your code to repository
-
+##### Commit
+Commit command will get remote url and match it with azwraith config, after getting the right config azwraith will 
+commit your code using credential from matched config
 ```
-% azwraith push 
-
 Usage:
-  azwraith push [flags]
+  azwraith commit [flags] <commit message>
 
 Flags:
-  -b, --branch string   specify git branch to push
-  -h, --help            help for push
-  -r, --remote string   specify git remote to push (default "origin")
+  -h, --help            help for commit
+  -r, --remote string   specify which git remote is used (default "origin")
+
+Example:
+  azwraith commit "This is proper commit message"
 
 ```
 
