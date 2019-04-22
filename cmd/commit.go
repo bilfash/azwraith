@@ -20,9 +20,10 @@ func init() {
 }
 
 var commitCmd = &cobra.Command{
-	Use:   "commit",
-	Short: "Commit your code",
-	Args:  cobra.ExactArgs(1),
+	Use:     "commit",
+	Short:   "Commit your code",
+	Example: "azwraith commit \"this is commit message\" [flag]",
+	Args:    cobra.ExactArgs(1),
 	Long: "Commit command will get remote url and match it with azwraith config, " +
 		"after getting the right config azwraith will commit your code using credential from matched config",
 	Run: func(cmd *cobra.Command, args []string) {
